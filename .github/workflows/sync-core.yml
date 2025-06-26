@@ -1,4 +1,4 @@
-name: Sync react-native-core from swm to github
+name: Sync rnc from swm to github
 
 on:
   workflow_dispatch:
