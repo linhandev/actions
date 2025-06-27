@@ -20,4 +20,4 @@ jobs:
           dst: github/linhandev
           dst_key: ${{ secrets.SSH_PRIVATE_KEY }}
           dst_token: ""
-          white_list: "ohos_react_native"
+          static_list: "ohos_react_native"
