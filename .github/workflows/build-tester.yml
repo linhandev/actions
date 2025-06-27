@@ -1,0 +1,20 @@
+name: Sync rnoh from gitee to github
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */6 * * *"
+
+
+jobs:
+  git-mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout ohos_react_native
+        uses: actions/checkout@v4
+        with:
+          repository: linhandev/ohos_react_native
+          ref: 0.77.1-rc.1-ohos
+      - name: build
+        run: |
+          ls
