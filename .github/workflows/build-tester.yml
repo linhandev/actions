@@ -8,7 +8,7 @@ on:
 
 jobs:
   git-mirror:
-    runs-on: ubuntu-latest
+    runs-on: aliaslsrmrf/clt:latest
     steps:
       - name: Checkout ohos_react_native
         uses: actions/checkout@v4
@@ -17,4 +17,5 @@ jobs:
           ref: 0.77.1-rc.1-ohos
       - name: build
         run: |
+          pwd
           ls
