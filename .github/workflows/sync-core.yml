@@ -7,7 +7,7 @@ on:
 
 # Ensures that only one mirror task will run at a time.
 concurrency:
-  group: git-mirror
+  group: sync-core
 
 jobs:
   git-mirror:

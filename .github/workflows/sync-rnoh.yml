@@ -7,16 +7,17 @@ on:
 
 # Ensures that only one mirror task will run at a time.
 concurrency:
-  group: git-mirror
+  group: sync-rnoh
 
 jobs:
   git-mirror:
     runs-on: ubuntu-latest
     steps:
-      - uses: wearerequired/git-mirror-action@v1
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+      - name: Sync rnoh from gitcode to github
+        uses: Yikun/hub-mirror-action@master
         with:
-          source-repo: "git@gitcode.com:openharmony-sig/ohos_react_native.git"
-          destination-repo: "git@github.com:linhandev/ohos_react_native.git"
+          src: gitee/openharmony-sig
+          dst: github/linhandev
+          dst_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          dst_token: ""
+          white_list: "ohos_react_native"
