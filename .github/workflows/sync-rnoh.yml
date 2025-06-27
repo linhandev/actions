@@ -14,10 +14,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Sync rnoh from gitcode to github
-        uses: Yikun/hub-mirror-action@master
+        uses: Yikun/hub-mirror-action@v1.5
         with:
           src: gitee/openharmony-sig
           dst: github/linhandev
           dst_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          dst_token: ${{ secrets.PUSH_TOKEN }}
+          dst_token: ""
           static_list: "ohos_react_native"
+          lfs: true
+          force_update: true
+          debug: true
