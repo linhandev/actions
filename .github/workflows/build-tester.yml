@@ -14,7 +14,8 @@ jobs:
     container:
       image: aliaslsrmrf/clt
     steps:
-      - uses: actions/checkout@v4
+      - name: Fetch workflow file
+        uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
         uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester
@@ -23,16 +24,22 @@ jobs:
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p product=default -p buildMode=debug -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+      - name: Recover workflow file for post steps
+        uses: actions/checkout@v4
 
   build-tester-ecosystem:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
     steps:
-      - uses: actions/checkout@v4
+      - name: Fetch workflow file
+        uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
         uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester ecosystem
         run: |
           cd packages/tester-ecosystem
           pnpm run test
+      - name: Recover workflow file for post steps
+        uses: actions/checkout@v4
+  
