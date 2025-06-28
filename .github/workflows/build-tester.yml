@@ -7,7 +7,7 @@ on:
 
 
 jobs:
-  git-mirror:
+  build-tester:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
@@ -17,12 +17,13 @@ jobs:
         with:
           repository: linhandev/ohos_react_native
           ref: 0.77.1-rc.1-ohos
-      - name: build
+      - name: Mark repo as safe for Git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      - name: Build tester
         run: |
           pwd
           ls
-          
-          git switch 0.77.1-rc.1-ohos
+
           pnpm init-ws
           cd packages/tester/harmony
           ohpm i
