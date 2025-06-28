@@ -35,6 +35,7 @@ jobs:
           env
 
           sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
+          sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
 
           pnpm init-ws
           cd packages/tester/harmony
