@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
+    strategy:
+      matrix:
+        build-mode: [debug, release] # Add more modes as needed
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
@@ -23,7 +26,7 @@ jobs:
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
-          hvigorw --mode module -p module=entry@default -p product=default -p buildMode=debug -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@default -p product=default -p buildMode=${{ matrix.build-mode }} -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Recover workflow file for post steps
         uses: actions/checkout@v4
 
