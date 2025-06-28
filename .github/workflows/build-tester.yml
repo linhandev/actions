@@ -23,6 +23,7 @@ jobs:
         run: |
           pwd
           ls
+          env
 
           pnpm init-ws
           cd packages/tester/harmony
