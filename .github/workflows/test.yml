@@ -1,0 +1,12 @@
+name: Build Tester
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-tester:
+    runs-on: self-hosted
+    steps:
+      - run: |
+          hdc list targets
+          pwd
