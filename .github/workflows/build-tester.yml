@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - '.github/workflows/build-tester.yml'
+      - '.github/actions/prepare-rnoh-env/action.yml'
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
