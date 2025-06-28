@@ -48,3 +48,4 @@ runs:
         apt-get install -y libatomic1 libgl1 openjdk-17-jdk
     - name: init-ws
       run: pnpm init-ws
+      shell: bash
