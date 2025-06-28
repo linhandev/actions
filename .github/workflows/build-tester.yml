@@ -30,14 +30,11 @@ jobs:
           touch ~/.npmrc
       - name: to move inside docker
         run: |
-          apt-get install -y libatomic1 
+          apt-get install -y libatomic1 libgl1
       - name: Build tester
         run: |
-          pwd
-          ls
-          env
-
           sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
+          # dont show progress to avoid too much log
           sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
 
           pnpm init-ws
