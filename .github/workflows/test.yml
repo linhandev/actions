@@ -1,4 +1,4 @@
-name: Build Tester
+name: selfhost
 
 on:
   workflow_dispatch:
@@ -8,5 +8,6 @@ jobs:
     runs-on: self-hosted
     steps:
       - run: |
+          env
           hdc list targets
           pwd
