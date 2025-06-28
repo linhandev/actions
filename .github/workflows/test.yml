@@ -2,6 +2,9 @@ name: selfhost
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/test.yml'
 
 jobs:
   build-tester:
