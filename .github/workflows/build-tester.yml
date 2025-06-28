@@ -9,7 +9,7 @@ on:
     - cron: "0 */6 * * *"
 
 jobs:
-  build-tester:
+  prepare-env:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
@@ -52,7 +52,7 @@ jobs:
             ${{ runner.os }}-submodules-
       - name: to move inside docker
         run: |
-          apt-get install -y libatomic1 libgl1
+          apt-get install -y libatomic1 libgl1 openjdk-17-jdk
       - name: Build tester
         run: |
           pnpm init-ws
