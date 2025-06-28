@@ -1,0 +1,56 @@
+name: Prepare RNOH build environment
+description: Prepare RNOH build environment
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout ohos_react_native
+      uses: actions/checkout@v4
+      with:
+        repository: linhandev/ohos_react_native
+        ref: 0.77.1-rc.1-ohos
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'pnpm'
+    - name: prep enviroment
+      shell: bash
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        touch ~/.npmrc
+      
+    - name: Change submodule origin
+      shell: bash
+      run: |
+        sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
+        # dont show progress to avoid too much log
+        sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
+    - name: Cache git submodules
+      uses: actions/cache@v4
+      with:
+        path: |
+          .git/modules
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/double-conversion
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fmt
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/glog
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/libevent
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fast_float
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/hermes
+        key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
+        restore-keys: |
+          ${{ runner.os }}-submodules-
+    - name: to move inside docker
+      shell: bash
+      run: |
+        apt-get install -y libatomic1 libgl1 openjdk-17-jdk
+    - name: Build tester
+      shell: bash
+      run: |
+        pnpm init-ws
+        cd packages/tester/harmony
+        ohpm i
+        hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
+        hvigorw --mode module -p module=entry@default -p product=default -p buildMode=debug -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
