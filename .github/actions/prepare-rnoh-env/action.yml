@@ -12,7 +12,8 @@ runs:
     - name: Move ohos_react_native to root
       shell: bash
       run: |
-        rm package.json .gitignore README.md
+        rm package.json .gitignore README.md tsconfig.json
+        bash workflow_utils/install_deps.sh
         shopt -s dotglob
         mv -n code_temp/* .
         rmdir code_temp

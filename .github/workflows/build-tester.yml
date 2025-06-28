@@ -26,6 +26,7 @@ jobs:
         uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester
         run: |
+          npx ts-node workflow_utils/update_signing_config.js packages/tester/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug

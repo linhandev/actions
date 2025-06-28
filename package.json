@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "devDependencies": {
     "@types/node": "^24.0.7",
-    "ts-node": "10.9.2"
+    "ts-node": "10.9.2",
+    "json5": "^2.2.3",
+    "@swc/core": "^1.11.10",
+    "@tsconfig/recommended": "1.0.8"
   }
 }

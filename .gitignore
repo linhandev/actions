@@ -1,5 +1,6 @@
 # project specific
 pnpm-lock.yaml
+workflow_utils/signing_configs.json
 
 node_modules/
 .node_modules/
