@@ -1,4 +1,4 @@
-name: Sync rnoh from gitee to github
+name: Build Tester
 
 on:
   workflow_dispatch:
