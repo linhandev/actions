@@ -46,11 +46,3 @@ runs:
       shell: bash
       run: |
         apt-get install -y libatomic1 libgl1 openjdk-17-jdk
-    - name: Build tester
-      shell: bash
-      run: |
-        pnpm init-ws
-        cd packages/tester/harmony
-        ohpm i
-        hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
-        hvigorw --mode module -p module=entry@default -p product=default -p buildMode=debug -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
