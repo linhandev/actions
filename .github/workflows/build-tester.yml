@@ -15,7 +15,8 @@ jobs:
       image: aliaslsrmrf/clt
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/prepare-rnoh-env
+      - name: Prepare RNOH build enviroment
+        uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester
         run: |
           pnpm init-ws
