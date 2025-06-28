@@ -1,6 +1,11 @@
 name: Build Tester
 
 on:
+  push:
+    branches:
+      - '0.77.1-rc.1-ohos'
+    paths:
+      - '.github/workflows/build-tester.yml'
   workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
