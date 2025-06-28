@@ -8,6 +8,14 @@ runs:
       with:
         repository: linhandev/ohos_react_native
         ref: 0.77.1-rc.1-ohos
+        path: code_temp
+    - name: Move ohos_react_native to root
+      shell: bash
+      run: |
+        rm package.json .gitignore README.md
+        shopt -s dotglob
+        mv -n code_temp/* .
+        rmdir code_temp
     - name: Install pnpm
       uses: pnpm/action-setup@v4
     - uses: actions/setup-node@v4
@@ -19,7 +27,6 @@ runs:
       run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
         touch ~/.npmrc
-      
     - name: Change submodule origin
       shell: bash
       run: |

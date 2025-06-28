@@ -20,7 +20,6 @@ jobs:
       matrix:
         build-mode: [debug, release] # Add more modes as needed
     steps:
-      - run: whoami
       - name: Fetch workflow file
         uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
@@ -41,8 +40,6 @@ jobs:
         with:
           name: $ARTIFACT_NAME
           path: ./"$ARTIFACT_NAME".hap
-      - name: Recover workflow files for post steps
-        uses: actions/checkout@v4
 
   build-tester-ecosystem:
     runs-on: ubuntu-latest
@@ -70,6 +67,4 @@ jobs:
         with:
           name: $ARTIFACT_NAME
           path: ./"$ARTIFACT_NAME".hap
-      - name: Recover workflow file for post steps
-        uses: actions/checkout@v4
   
