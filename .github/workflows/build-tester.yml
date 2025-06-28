@@ -19,8 +19,20 @@ jobs:
         uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester
         run: |
-          pnpm init-ws
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p product=default -p buildMode=debug -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+
+  build-tester-ecosystem:
+    runs-on: ubuntu-latest
+    container:
+      image: aliaslsrmrf/clt
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare RNOH build enviroment
+        uses: ./.github/actions/prepare-rnoh-env
+      - name: Build tester ecosystem
+        run: |
+          cd packages/tester-ecosystem
+          pnpm run test
