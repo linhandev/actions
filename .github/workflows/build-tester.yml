@@ -13,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
     strategy:
       matrix:
         build-mode: [debug, release] # Add more modes as needed
