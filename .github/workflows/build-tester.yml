@@ -29,6 +29,7 @@ jobs:
           cache: 'pnpm'
       - run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          touch ~/.npmrc
       - name: Build tester
         run: |
           pwd
