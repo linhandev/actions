@@ -28,15 +28,32 @@ jobs:
       - run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           touch ~/.npmrc
+      - name: Change submodule origin
+        run: |
+          sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
+          # dont show progress to avoid too much log
+          sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
+      - name: Cache git submodules
+        uses: actions/cache@v4
+        with:
+          path: |
+            .git/modules
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/double-conversion
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fmt
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/glog
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/libevent
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fast_float
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly
+            packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/hermes
+          key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
+          restore-keys: |
+            ${{ runner.os }}-submodules-
       - name: to move inside docker
         run: |
           apt-get install -y libatomic1 libgl1
       - name: Build tester
         run: |
-          sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
-          # dont show progress to avoid too much log
-          sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
-
           pnpm init-ws
           # cd packages/tester/harmony
           # ohpm i
