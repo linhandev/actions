@@ -20,16 +20,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'pnpm'
-      - name: Install pnpm
-        run: npm install -g pnpm@latest-10
-      - name: Mark repo as safe for Git
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          cache: 'npm'
+      - run: |
+          npm install -g pnpm@latest-10
       - name: Build tester
         run: |
           pwd
           ls
           env
+
+          sed -i 's|https://github.com/fmtlib/fmt.git|https://gitcode.com/gh_mirrors/fm/fmt.git|g' .gitmodules
 
           pnpm init-ws
           cd packages/tester/harmony
