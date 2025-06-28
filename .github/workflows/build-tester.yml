@@ -56,6 +56,7 @@ jobs:
         uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester ecosystem
         run: |
+          npx ts-node workflow_utils/update_signing_config.js packages/tester-ecosystem/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
           cd packages/tester-ecosystem
           pnpm run test
       - name: Rename artifact

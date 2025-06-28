@@ -9,51 +9,47 @@ runs:
         repository: linhandev/ohos_react_native
         ref: 0.77.1-rc.1-ohos
         path: code_temp
+
     - name: Move ohos_react_native to root
       shell: bash
       run: |
         rm package.json .gitignore README.md tsconfig.json
-        bash workflow_utils/install_deps.sh
         shopt -s dotglob
         mv -n code_temp/* .
         rmdir code_temp
+
     - name: Install pnpm
       uses: pnpm/action-setup@v4
+
     - uses: actions/setup-node@v4
       with:
         node-version: 22
         cache: 'pnpm'
-    - name: prep enviroment
+    
+    - name: Config git and npm dep
       shell: bash
       run: |
         git config --global --add safe.directory "$GITHUB_WORKSPACE"
         touch ~/.npmrc
+        bash workflow_utils/install_deps.sh
+
     - name: Change submodule origin
       shell: bash
       run: |
         sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
         # dont show progress to avoid too much log
         sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
+
     - name: Cache git submodules
       uses: actions/cache@v4
       with:
         path: |
           .git/modules
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/boost
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/double-conversion
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fmt
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/glog
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/libevent
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/fast_float
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/folly
-          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/hermes
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/{boost,double-conversion,fmt,glog,libevent,fast_float,folly,hermes}
         key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
         restore-keys: |
           ${{ runner.os }}-submodules-
-    - name: to move inside docker
-      shell: bash
-      run: |
-        apt-get install -y libatomic1 libgl1 openjdk-17-jdk
+
     - name: init-ws
       run: pnpm init-ws
       shell: bash
