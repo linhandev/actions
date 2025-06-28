@@ -28,6 +28,9 @@ jobs:
       - run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           touch ~/.npmrc
+      - name: to move inside docker
+        run: |
+          apt-get install -y libatomic1 
       - name: Build tester
         run: |
           pwd
