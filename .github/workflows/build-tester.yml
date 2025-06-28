@@ -8,7 +8,9 @@ on:
 
 jobs:
   git-mirror:
-    runs-on: aliaslsrmrf/clt:latest
+    runs-on: ubuntu-latest
+    container:
+      image: aliaslsrmrf/clt:latest
     steps:
       - name: Checkout ohos_react_native
         uses: actions/checkout@v4
