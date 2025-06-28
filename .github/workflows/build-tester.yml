@@ -17,6 +17,7 @@ jobs:
       matrix:
         build-mode: [debug, release] # Add more modes as needed
     steps:
+      - run: whoami
       - name: Fetch workflow file
         uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
@@ -27,7 +28,17 @@ jobs:
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p product=default -p buildMode=${{ matrix.build-mode }} -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
-      - name: Recover workflow file for post steps
+      - name: Rename artifact
+        run: |
+          ARTIFACT_NAME="tester-$(git rev-parse HEAD)-${{ matrix.build-mode }}"
+          cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+      - name: Save built artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: $ARTIFACT_NAME
+          path: ./"$ARTIFACT_NAME".hap
+      - name: Recover workflow files for post steps
         uses: actions/checkout@v4
 
   build-tester-ecosystem:
@@ -43,6 +54,16 @@ jobs:
         run: |
           cd packages/tester-ecosystem
           pnpm run test
+      - name: Rename artifact
+        run: |
+          ARTIFACT_NAME="tester-eco-$(git rev-parse HEAD)"
+          cp packages/tester-ecosystem/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+      - name: Save built artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: $ARTIFACT_NAME
+          path: ./"$ARTIFACT_NAME".hap
       - name: Recover workflow file for post steps
         uses: actions/checkout@v4
   
