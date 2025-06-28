@@ -9,11 +9,12 @@ on:
     - cron: "0 */6 * * *"
 
 jobs:
-  prepare-env:
+  build-tester:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
     steps:
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/prepare-rnoh-env
       - name: Build tester
         run: |
