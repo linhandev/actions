@@ -1,0 +1,10 @@
+name: Test All
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-tester:
+    uses: linhandev/actions/.github/workflows/build-tester.yml
+  build-tester-eco:
+    uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml
