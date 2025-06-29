@@ -64,8 +64,8 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
           path: ./${{ env.ARTIFACT_NAME }}.hap
 
-  run-hap:
+  run-ut:
     needs: build-tester
-    uses: linhandev/actions/.github/workflows/run-hap.yml@develop
+    uses: linhandev/actions/.github/workflows/run-ut.yml@develop
     with:
       artifact_name: ${{ needs.build-tester.outputs.artifact_name }}
