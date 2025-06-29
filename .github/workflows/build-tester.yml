@@ -13,6 +13,9 @@ on:
       dockerhub_token:
         description: 'DockerHub token'
         required: true
+      signing_config_map:
+        description: 'Signing config map'
+        required: true
 
   workflow_dispatch:
   # schedule:
