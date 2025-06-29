@@ -50,7 +50,7 @@ jobs:
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
-          hvigorw --mode module -p module=entry@default -p product=default -p buildMode=${{ matrix.build-mode }} -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@ohosTest -p product=default -p buildMode=${{ matrix.build-mode }} -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Rename artifact
         id: artifact-name
         run: |
