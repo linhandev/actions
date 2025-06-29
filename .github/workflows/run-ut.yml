@@ -95,3 +95,8 @@ jobs:
         with:
           name: ${{ env.hap_name }}-recording
           path: ${{ env.hap_name }}-recording
+      
+      - name: Clean up
+        if: always()
+        run: |
+          rm -rf .
