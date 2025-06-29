@@ -72,6 +72,7 @@ jobs:
           # stop record, pull video to runner
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
           query_result=$(hdc shell mediatool query "$screen_recording_name")
+          echo "$query_result"
           if ! echo "$query_result" | grep -q "find 1 result"; then
             echo "::error::Found 0 or multiple screen recording."
             exit 1
@@ -82,6 +83,7 @@ jobs:
             echo "For recording: $file"
             hdc file recv $file .
           done
+          cd -
 
           # test result
           grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log && exit 1
