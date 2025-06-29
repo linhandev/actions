@@ -27,9 +27,9 @@ jobs:
       - name: Test has device
         run: |
           output=$(hdc list targets)
-          echo "$output"
-          if [[ "$output" == "[Empty]" ]]; then
-            echo "No device found, please connect a device and try again."
+          echo ">$output<"
+          if [[ "$(echo "$output" | xargs)" == "[Empty]" ]]; then
+            echo "::error::No device found, please connect a device and try again."
             exit 1
           fi
       - name: Download HAP artifact
