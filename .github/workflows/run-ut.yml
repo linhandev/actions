@@ -53,8 +53,9 @@ jobs:
       - name: Install hap for local debug
         if: inputs.artifact_name == ''
         run: |
+          hdc uninstall ${{ env.bundle_name }}
           hdc install /home/user/Desktop/software/sample.hap
-          # fixme: 2 haps
+          hdc install /home/user/Desktop/software/sample-test.hap
 
       - name: Run unittest
         id: run_unittest
