@@ -100,5 +100,6 @@ jobs:
         if: always()
         run: |
           pwd
+          ls -lah
           tree
           rm -rf ./*
