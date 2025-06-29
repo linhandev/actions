@@ -1,11 +1,19 @@
 name: Build Tester
 
 on:
-  push:
-    paths:
-      - '.github/workflows/build-tester.yml'
-      - '.github/actions/prepare-rnoh-env/action.yml'
+  # push:
+  #   paths:
+  #     - '.github/workflows/build-tester.yml'
+  #     - '.github/actions/prepare-rnoh-env/action.yml'
   workflow_call:
+    secrets:
+      dockerhub_username:
+        description: 'DockerHub username'
+        required: true
+      dockerhub_token:
+        description: 'DockerHub token'
+        required: true
+
   workflow_dispatch:
   # schedule:
   #   - cron: "0 */6 * * *"
