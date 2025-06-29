@@ -2,11 +2,18 @@ name: Run hap
 
 on:
   workflow_dispatch:
+    inputs:
+      artifact_name:
+        description: The name of the HAP artifact to run
+        required: true
+        type: string
+        default: "tester-010105d2faa76b8f8c4845562e4b177f45a6dce6-jsvm-debug"
   workflow_call:
     inputs:
       artifact_name:
         required: true
         type: string
+        
 concurrency:
   group: run-hap
 
