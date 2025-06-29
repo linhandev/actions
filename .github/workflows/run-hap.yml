@@ -32,16 +32,19 @@ jobs:
       - name: Setup Env
         run: |
           echo "PATH=$PATH:~/Desktop/software/command-line-tools/sdk/default/openharmony/toolchains/" >> $GITHUB_ENV
-      # - name: Download HAP artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: ${{ inputs.artifact_name }}
-      # - name: Install HAP
-      #   run: |
-      #     hdc list targets
-      #     wget 
-      #     hdc install ${{ inputs.artifact_name }}.hap
+      - name: Download HAP artifact
+        if: github.event_name != 'workflow_dispatch'
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+      - name: Install HAP
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          hdc list targets
+          wget 
+          hdc install ${{ inputs.artifact_name }}.hap
       - name: Install hap for local debug
+        if: github.event_name == 'workflow_dispatch'
         run: |
           hdc install /home/user/Desktop/tester-010105d2faa76b8f8c4845562e4b177f45a6dce6-jsvm-debug.hap
       - name: Run unittest
