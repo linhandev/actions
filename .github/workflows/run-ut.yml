@@ -79,8 +79,8 @@ jobs:
           cd ${{ env.hap_name }}-recording
           video_uri=$(hdc shell mediatool query $screen_recording_name -u | grep "mp4" | tr -d '"')
           video_path=$(hdc shell mediatool recv $video_uri /data/local/tmp/ | grep "mp4")
-          hdc file recv video_path .
-          hdc shell rm video_path
+          hdc file recv $video_path .
+          hdc shell rm $video_path
           cd -
 
           # test result
