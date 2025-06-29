@@ -72,18 +72,15 @@ jobs:
 
           # stop record, pull video to runner
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
-          query_result=$(hdc shell mediatool query "$screen_recording_name")
-          echo "$query_result"
-          if ! echo "$query_result" | grep -q "find 1 result"; then
-            echo "::error::Found 0 or multiple screen recording."
-            exit 1
-          fi
           mkdir ${{ env.hap_name }}-recording
           cd ${{ env.hap_name }}-recording
-          for file in $(echo "$query_result" | grep '^/storage/'); do
-            echo "For recording: $file"
-            hdc file recv $file .
-          done
+          tmp_path=$(hdc shell mediatool recv $(echo "$query_result" | grep '^/storage/') /data/local/tmp)
+          echo tmp_path
+          # for file in $(echo "$query_result" | grep '^/storage/'); do
+          #   echo "For recording: $file"
+          #   hdc shell 
+          #   hdc file recv $file .
+          # done
           cd -
 
           # test result
