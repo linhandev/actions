@@ -24,6 +24,14 @@ jobs:
       - name: Setup Env
         run: |
           echo "PATH=$PATH:~/Desktop/software/command-line-tools/sdk/default/openharmony/toolchains/" >> $GITHUB_ENV
+      - name: Test has device
+        run: |
+          output=$(hdc list targets)
+          echo "$output"
+          if [[ "$output" == "[Empty]" ]]; then
+            echo "No device found, please connect a device and try again."
+            exit 1
+          fi
       - name: Download HAP artifact
         if: github.event_name == 'workflow_call'
         uses: actions/download-artifact@v4
