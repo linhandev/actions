@@ -32,15 +32,18 @@ jobs:
       - name: Setup Env
         run: |
           echo "PATH=$PATH:~/Desktop/software/command-line-tools/sdk/default/openharmony/toolchains/" >> $GITHUB_ENV
-      - run: |
-          hdc list targets
-      - name: Download HAP artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ inputs.artifact_name }}
-
-      - name: Install HAP
+      # - name: Download HAP artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: ${{ inputs.artifact_name }}
+      # - name: Install HAP
+      #   run: |
+      #     hdc list targets
+      #     wget 
+      #     hdc install ${{ inputs.artifact_name }}.hap
+      - name: Install hap for local debug
         run: |
-          hdc install ${{ inputs.artifact_name }}.hap
-          sleep 5
+          hdc install /home/user/Desktop/tester-010105d2faa76b8f8c4845562e4b177f45a6dce6-jsvm-debug.hap
+      - name: Run unittest
+        run: |
           hdc shell aa test -b ${{ inputs.artifact_name }} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000
