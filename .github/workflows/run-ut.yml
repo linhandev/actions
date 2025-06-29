@@ -24,6 +24,13 @@ jobs:
       - name: Setup Env
         run: |
           echo "PATH=$PATH:~/Desktop/software/command-line-tools/sdk/default/openharmony/toolchains/" >> $GITHUB_ENV
+          if [[ "${{ inputs.artifact_name }}" != "" ]]; then
+            hap_name="${{ inputs.artifact_name }}"
+          else
+            hap_name="sample"
+          fi
+          echo "hap_name=$hap_name" >> $GITHUB_ENV
+
       - name: Test has device
         run: |
           output=$(hdc list targets)
@@ -31,29 +38,59 @@ jobs:
             echo "::error::No connected device found. Plz contact the self-hosted runner admin to attach a device."
             exit 1
           fi
+
       - name: Download HAP artifact
-        if: github.event_name == 'workflow_call'
+        if: inputs.artifact_name != ''
         uses: actions/download-artifact@v4
         with:
-          name: ${{ inputs.artifact_name }}
+          name: ${{ env.hap_name }}
+
       - name: Install HAP
-        if: github.event_name == 'workflow_call'
+        if: inputs.artifact_name != ''
         run: |
           hdc list targets
-          cd ${{ inputs.artifact_name }}
-          hdc install ${{ inputs.artifact_name }}.hap
-          hdc install ${{ inputs.artifact_name }}-test.hap
+          cd ${{ env.hap_name }}
+          hdc install ${{ env.hap_name }}.hap
+          hdc install ${{ env.hap_name }}-test.hap
+
       - name: Install hap for local debug
-        if: github.event_name != 'workflow_call'
+        if: inputs.artifact_name == ''
         run: |
           hdc install /home/user/Desktop/software/sample.hap
           # fixme: 2 haps
+
       - name: Run unittest
         run: |
+          screen_recording_name="${{ env.hap_name }}-$(date +%Y%m%d_%H%M%S).mp4"
+          hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility --ps "CustomizedFileName" "$screen_recording_name"
+          sleep 2
+
           hdc rport tcp:8081 tcp:8081
           hdc rport tcp:8082 tcp:8082
           hdc rport tcp:8083 tcp:8083
 
           hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000 | tee test_output.log
+
+          # stop record, pull video to runner
+          hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
+          query_result=$(hdc shell mediatool query "$screen_recording_name")
+          if ! echo "$query_result" | grep -q "find 1 result"; then
+            echo "::error::Found 0 or multiple screen recording."
+            exit 1
+          fi
+          mkdir ${{ env.hap_name }}-recording
+          cd ${{ env.hap_name }}-recording
+          for file in $(echo "$query_result" | grep '^/storage/'); do
+            echo "For recording: $file"
+            hdc file recv $file .
+          done
+
+          # test result
           grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log && exit 1
           grep -q "Pass: [1-9]" test_output.log || exit 1
+
+      - name: Upload screen recording artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.hap_name }}-recording
+          path: ${{ env.hap_name }}-recording
