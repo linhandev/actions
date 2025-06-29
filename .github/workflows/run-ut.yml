@@ -28,7 +28,7 @@ jobs:
         run: |
           output=$(hdc list targets)
           if echo "$output" | grep -q 'Empty'; then
-            echo "::error::No device found, please connect a device and try again."
+            echo "::error::No connected device found. Plz contact the self-hosted runner admin to attach a device."
             exit 1
           fi
       - name: Download HAP artifact
