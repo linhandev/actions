@@ -19,15 +19,32 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     strategy:
       matrix:
-        build-mode: [debug, release] # Add more modes as needed
+        build-mode: [debug, release]
+        js-engine: [jsvm, hermes]
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
         uses: ./.github/actions/prepare-rnoh-env
-      - name: Build tester
+      - name: Build RN
         run: |
+          cd packages/tester
+          if [ "${{ matrix.js-engine }}" = "jsvm" ]; then
+            pnpm run bundle
+          else
+            npm run bundle:hermes
+          fi
+      - name: Build native
+        run: |
+          # add siging config
           npx ts-node workflow_utils/update_signing_config.ts packages/tester/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
+          # uncomment bundle provider
+          if [ "${{ matrix.js-engine }}" = "jsvm" ]; then
+            npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')"
+          else
+            npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),"
+          fi
+          
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
@@ -72,4 +89,3 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ./${{ env.ARTIFACT_NAME }}.hap
-  
