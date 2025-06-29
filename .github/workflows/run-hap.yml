@@ -8,12 +8,20 @@ on:
         required: true
         type: string
         default: "tester-010105d2faa76b8f8c4845562e4b177f45a6dce6-jsvm-debug"
+      bundle_name:
+        description: The bundle name of the hap, eg com.rnoh.tester
+        required: false
+        type: string
+        default: "com.rnoh.tester"
   workflow_call:
     inputs:
       artifact_name:
         required: true
         type: string
-        
+      bundle_name:
+        required: false
+        type: string
+        default: "com.rnoh.tester"
 concurrency:
   group: run-hap
 
@@ -34,3 +42,5 @@ jobs:
       - name: Install HAP
         run: |
           hdc install ${{ inputs.artifact_name }}.hap
+          sleep 5
+          hdc shell aa test -b ${{ inputs.artifact_name }} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000
