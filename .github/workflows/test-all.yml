@@ -5,6 +5,6 @@ on:
 
 jobs:
   build-tester:
-    uses: linhandev/actions/.github/workflows/build-tester.yml
+    uses: linhandev/actions/.github/workflows/build-tester.yml@develop
   build-tester-eco:
-    uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml
+    uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml@develop
