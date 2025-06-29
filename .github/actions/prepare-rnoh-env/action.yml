@@ -33,11 +33,6 @@ runs:
         touch ~/.npmrc
         bash workflow_utils/install_deps.sh
         ARTIFACT_NAME="tester-eco-$(git rev-parse HEAD)"
-        echo $ARTIFACT_NAME
-        echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
-
-    - run: echo ${{ env.ARTIFACT_NAME }}
-      shell: bash
 
     - name: Change submodule origin
       shell: bash

@@ -40,9 +40,9 @@ jobs:
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
-          name: $ARTIFACT_NAME
-          path: ./"$ARTIFACT_NAME".hap
-
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ./${{ env.ARTIFACT_NAME }}.hap
+  
   build-tester-ecosystem:
     runs-on: ubuntu-latest
     container:
