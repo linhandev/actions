@@ -97,8 +97,8 @@ jobs:
       - name: Clean up
         if: always()
         run: |
-          # in case recording didn't stop
-          hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
+          # in case recording didn't stop, this wont save the recording
+          hdc shell aa force-stop com.huawei.hmos.screenrecorder
 
           pwd
           ls -lah
