@@ -75,7 +75,7 @@ jobs:
           mkdir ${{ env.hap_name }}-recording
           cd ${{ env.hap_name }}-recording
           tmp_path=$(hdc shell mediatool recv $(echo "$query_result" | grep '^/storage/') /data/local/tmp)
-          echo tmp_path
+          echo "$tmp_path"
           # for file in $(echo "$query_result" | grep '^/storage/'); do
           #   echo "For recording: $file"
           #   hdc shell 
