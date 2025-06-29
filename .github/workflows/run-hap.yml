@@ -38,7 +38,7 @@ jobs:
       - name: Install hap for local debug
         if: github.event_name == 'workflow_dispatch'
         run: |
-          hdc install /home/user/Desktop/tester-010105d2faa76b8f8c4845562e4b177f45a6dce6-jsvm-debug.hap
+          hdc install /home/user/Desktop/software/sample.hap
       - name: Run unittest
         run: |
           hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000
