@@ -41,4 +41,5 @@ jobs:
           hdc install /home/user/Desktop/software/sample.hap
       - name: Run unittest
         run: |
-          hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000
+          hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000 | tee test_output.log
+          grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log && exit 1 || exit 0
