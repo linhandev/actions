@@ -33,7 +33,6 @@ jobs:
         if: github.event_name == 'workflow_call'
         run: |
           hdc list targets
-          wget 
           hdc install ${{ inputs.artifact_name }}.hap
       - name: Install hap for local debug
         if: github.event_name != 'workflow_call'
@@ -41,6 +40,10 @@ jobs:
           hdc install /home/user/Desktop/software/sample.hap
       - name: Run unittest
         run: |
+          hdc rport tcp:8081 tcp:8081
+          hdc rport tcp:8082 tcp:8082
+          hdc rport tcp:8083 tcp:8083
+
           hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 60000 | tee test_output.log
           grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log && exit 1
           grep -q "Pass: [1-9]" test_output.log || exit 1
