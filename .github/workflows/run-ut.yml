@@ -99,4 +99,4 @@ jobs:
       - name: Clean up
         if: always()
         run: |
-          rm -rf .
+          rm -rf ./*
