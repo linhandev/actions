@@ -43,7 +43,7 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
           path: ./${{ env.ARTIFACT_NAME }}.hap
   
-  build-tester-ecosystem:
+  verify-and-build-tester-ecosystem:
     runs-on: ubuntu-latest
     container:
       image: aliaslsrmrf/clt
@@ -55,6 +55,8 @@ jobs:
         uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
         uses: ./.github/actions/prepare-rnoh-env
+      - name: Verify
+        run: pnpm verify
       - name: Build tester ecosystem
         run: |
           npx ts-node workflow_utils/update_signing_config.ts packages/tester-ecosystem/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
