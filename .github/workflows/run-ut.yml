@@ -69,7 +69,7 @@ jobs:
           hdc rport tcp:8082 tcp:8082
           hdc rport tcp:8083 tcp:8083
 
-          hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 120000 | tee test_output.log
+          hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 30000 | tee test_output.log
 
           # stop record, pull video to runner
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
