@@ -27,8 +27,7 @@ jobs:
       - name: Test has device
         run: |
           output=$(hdc list targets)
-          echo ">$output<"
-          if [[ "$(echo "$output" | xargs)" == "[Empty]" ]]; then
+          if echo "$output" | grep -q '^\[Empty\]$'; then
             echo "::error::No device found, please connect a device and try again."
             exit 1
           fi
