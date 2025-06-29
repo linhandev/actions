@@ -1,0 +1,41 @@
+name: Build Tester
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-tester-ecosystem.yml'
+      - '.github/actions/prepare-rnoh-env/action.yml'
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 */6 * * *"
+
+jobs:
+  verify-and-build-tester-ecosystem:
+    runs-on: ubuntu-latest
+    container:
+      image: aliaslsrmrf/clt
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - name: Fetch workflow file
+        uses: actions/checkout@v4
+      - name: Prepare RNOH build enviroment
+        uses: ./.github/actions/prepare-rnoh-env
+      - name: Verify
+        run: pnpm verify
+      - name: Build tester ecosystem
+        run: |
+          npx ts-node workflow_utils/update_signing_config.ts packages/tester-ecosystem/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
+          cd packages/tester-ecosystem
+          pnpm run test
+      - name: Rename artifact
+        run: |
+          ARTIFACT_NAME="tester-eco-$(git rev-parse HEAD)"
+          cp packages/tester-ecosystem/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
+          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+      - name: Save built artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ./${{ env.ARTIFACT_NAME }}.hap
