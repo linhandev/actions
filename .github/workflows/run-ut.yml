@@ -75,14 +75,10 @@ jobs:
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
           mkdir ${{ env.hap_name }}-recording
           cd ${{ env.hap_name }}-recording
-          query_result=$(hdc shell mediatool query test.mp4)
-          tmp_video_path=$(hdc shell mediatool recv $(echo "$query_result" | grep '^/storage/') /data/local/tmp)
-          echo "$tmp_path"
-          # for file in $(echo "$query_result" | grep '^/storage/'); do
-          #   echo "For recording: $file"
-          #   hdc shell 
-          #   hdc file recv $file .
-          # done
+          video_uri=$(hdc shell mediatool query $screen_recording_name -u | grep "mp4" | tr -d '"')
+          video_path=$(hdc shell mediatool recv $video_uri /data/local/tmp/ | grep "mp4")
+          hdc file recv video_path .
+          hdc shell rm video_path
           cd -
 
           # test result
