@@ -73,6 +73,8 @@ jobs:
 
           # stop record, pull video to runner
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
+          sleep 3
+
           mkdir ${{ env.hap_name }}-recording
           cd ${{ env.hap_name }}-recording
           video_uri=$(hdc shell mediatool query $screen_recording_name -u | grep "mp4" | tr -d '"')
