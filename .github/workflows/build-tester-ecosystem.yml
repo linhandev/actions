@@ -24,8 +24,8 @@ jobs:
     container:
       image: aliaslsrmrf/clt
       credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME || inputs.dockerhub_username }}
-        password: ${{ secrets.DOCKERHUB_TOKEN || inputs.dockerhub_token }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
