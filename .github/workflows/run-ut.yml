@@ -33,11 +33,14 @@ jobs:
         if: github.event_name == 'workflow_call'
         run: |
           hdc list targets
+          cd ${{ inputs.artifact_name }}
           hdc install ${{ inputs.artifact_name }}.hap
+          hdc install ${{ inputs.artifact_name }}-test.hap
       - name: Install hap for local debug
         if: github.event_name != 'workflow_call'
         run: |
           hdc install /home/user/Desktop/software/sample.hap
+          # fixme: 2 haps
       - name: Run unittest
         run: |
           hdc rport tcp:8081 tcp:8081

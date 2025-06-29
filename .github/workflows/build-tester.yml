@@ -19,7 +19,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     strategy:
       matrix:
-        build-mode: [test] # debug, release, test (to run ut, must use this mode)
+        build-mode: [debug] # debug, release
         js-engine: [jsvm] # jsvm, hermes
     outputs:
       artifact_name: ${{ steps.artifact-name.outputs.artifact_name }}
@@ -51,18 +51,21 @@ jobs:
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ matrix.build-mode }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Rename artifact
         id: artifact-name
         run: |
-          ARTIFACT_NAME="tester-$(git rev-parse HEAD)-${{ matrix.js-engine }}-${{ matrix.build-mode }}"
-          cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
+          ARTIFACT_NAME="tester-$(git rev-parse HEAD | cut -c1-16)-${{ matrix.js-engine }}-${{ matrix.build-mode }}"
+          mkdir artifacts
+          cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME"/"$ARTIFACT_NAME".hap
+          cp packages/tester/harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap ./"$ARTIFACT_NAME"/"$ARTIFACT_NAME"-test.hap
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
           echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: ./${{ env.ARTIFACT_NAME }}.hap
+          path: ./${{ env.ARTIFACT_NAME }}
 
   run-ut:
     needs: build-tester
