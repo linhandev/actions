@@ -99,4 +99,6 @@ jobs:
       - name: Clean up
         if: always()
         run: |
+          pwd
+          tree
           rm -rf ./*
