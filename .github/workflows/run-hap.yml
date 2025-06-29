@@ -1,10 +1,7 @@
 name: Run hap
 
 on:
-  # workflow_dispatch:
-  #   push:
-  #     paths:
-  #       - '.github/workflows/test.yml'
+  workflow_dispatch:
   workflow_call:
     inputs:
       artifact_name:

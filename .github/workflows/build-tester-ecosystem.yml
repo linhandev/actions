@@ -1,4 +1,4 @@
-name: Build Tester
+name: Build Tester Ecosystem
 
 on:
   push:
