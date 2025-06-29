@@ -61,6 +61,7 @@ jobs:
         id: run_unittest
         run: |
           screen_recording_name="${{ env.hap_name }}-$(date +%Y%m%d_%H%M%S).mp4"
+          echo $screen_recording_name
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility --ps "CustomizedFileName" "$screen_recording_name"
           sleep 2
 
@@ -97,6 +98,9 @@ jobs:
       - name: Clean up
         if: always()
         run: |
+          # in case recording didn't stop
+          hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
+
           pwd
           ls -lah
           tree
