@@ -72,6 +72,7 @@ jobs:
           hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 30000 | tee test_output.log
 
           # stop record, pull video to runner
+          sleep 1
           hdc shell aa start -b com.huawei.hmos.screenrecorder -a com.huawei.hmos.screenrecorder.ServiceExtAbility
           sleep 3
 
