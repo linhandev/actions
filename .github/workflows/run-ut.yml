@@ -90,7 +90,7 @@ jobs:
           grep -q "Pass: [1-9]" test_output.log || exit 1
 
       - name: Upload screen recording artifact
-        if: steps.run_unittest.outcome != null
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.hap_name }}-recording
