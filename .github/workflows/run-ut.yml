@@ -84,8 +84,14 @@ jobs:
           cd -
 
           # test result
-          grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log && exit 1
-          grep -q "Pass: [1-9]" test_output.log || exit 1
+          if grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log; then
+            echo "::error::Error or Failure found during test."
+            exit 1
+          fi
+          if ! grep -q "Pass: [1-9]" test_output.log; then
+            echo "::error::No passing tests found."
+            exit 1
+          fi
 
       - name: Upload screen recording artifact
         if: always()
