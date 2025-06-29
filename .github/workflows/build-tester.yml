@@ -19,8 +19,10 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     strategy:
       matrix:
-        build-mode: [debug] # debug, release
-        js-engine: [jsvm] # jsvm, hermes
+        # build-mode: [debug] 
+        build-mode: [debug, release]
+        # js-engine: [jsvm]
+        js-engine: [jsvm, hermes]
     outputs:
       artifact_name: ${{ steps.artifact-name.outputs.artifact_name }}
     steps:
