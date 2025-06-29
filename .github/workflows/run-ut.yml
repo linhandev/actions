@@ -1,9 +1,9 @@
-name: Run hap
+name: Run ut
 
 on:
   push:
     paths:
-      - .github/workflows/run-hap.yml
+      - .github/workflows/run-ut.yml
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -15,7 +15,7 @@ on:
         type: string
         default: "com.rnoh.tester"
 concurrency:
-  group: run-hap
+  group: run-on-device
 
 jobs:
   test-hap:
