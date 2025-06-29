@@ -44,14 +44,14 @@ jobs:
           else
             npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),"
           fi
-          
+
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p product=default -p buildMode=${{ matrix.build-mode }} -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Rename artifact
         run: |
-          ARTIFACT_NAME="tester-$(git rev-parse HEAD)-${{ matrix.build-mode }}"
+          ARTIFACT_NAME="tester-$(git rev-parse HEAD)-${{ matrix.js-engine }}-${{ matrix.build-mode }}"
           cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
       - name: Save built artifact
