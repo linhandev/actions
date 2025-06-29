@@ -7,6 +7,15 @@ on:
       - '.github/actions/prepare-rnoh-env/action.yml'
   workflow_call:
   workflow_dispatch:
+    inputs:
+      dockerhub_username:
+        description: 'DockerHub username'
+        required: true
+        type: string
+      dockerhub_token:
+        description: 'DockerHub token'
+        required: true
+        type: string
   # schedule:
   #   - cron: "0 */6 * * *"
 
@@ -16,8 +25,8 @@ jobs:
     container:
       image: aliaslsrmrf/clt
       credentials:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ secrets.DOCKERHUB_USERNAME || inputs.dockerhub_username }}
+        password: ${{ secrets.DOCKERHUB_TOKEN || inputs.dockerhub_token }}
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4

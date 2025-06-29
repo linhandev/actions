@@ -9,5 +9,9 @@ on:
 jobs:
   build-tester:
     uses: linhandev/actions/.github/workflows/build-tester.yml@develop
-  build-tester-eco:
+  build-tester-ecosystem:
     uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml@develop
+    with:
+        dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+        dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+  
