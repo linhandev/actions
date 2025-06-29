@@ -2,6 +2,9 @@ name: Test All
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+    - '.github/workflows/test-all.yml'
 
 jobs:
   build-tester:
