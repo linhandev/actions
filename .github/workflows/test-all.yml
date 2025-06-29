@@ -11,7 +11,7 @@ jobs:
     uses: linhandev/actions/.github/workflows/build-tester.yml@develop
   build-tester-ecosystem:
     uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml@develop
-    with:
+    secrets:
         dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
         dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
   

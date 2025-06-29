@@ -6,16 +6,15 @@ on:
       - '.github/workflows/build-tester-ecosystem.yml'
       - '.github/actions/prepare-rnoh-env/action.yml'
   workflow_call:
-  workflow_dispatch:
-    inputs:
+    secrets:
       dockerhub_username:
         description: 'DockerHub username'
         required: true
-        type: string
       dockerhub_token:
         description: 'DockerHub token'
         required: true
-        type: string
+
+  workflow_dispatch:
   # schedule:
   #   - cron: "0 */6 * * *"
 
