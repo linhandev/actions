@@ -1,10 +1,10 @@
 name: Build Tester Ecosystem
 
 on:
-  push:
-    paths:
-      - '.github/workflows/build-tester-ecosystem.yml'
-      - '.github/actions/prepare-rnoh-env/action.yml'
+  # push:
+  #   paths:
+  #     - '.github/workflows/build-tester-ecosystem.yml'
+  #     - '.github/actions/prepare-rnoh-env/action.yml'
   workflow_call:
     secrets:
       dockerhub_username:
