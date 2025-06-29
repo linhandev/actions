@@ -21,6 +21,8 @@ jobs:
       matrix:
         build-mode: [debug, release]
         js-engine: [jsvm, hermes]
+    outputs:
+      artifact_name: ${{ steps.artifact-name.outputs.artifact_name }}
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
@@ -50,16 +52,22 @@ jobs:
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p product=default -p buildMode=${{ matrix.build-mode }} -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Rename artifact
+        id: artifact-name
         run: |
           ARTIFACT_NAME="tester-$(git rev-parse HEAD)-${{ matrix.js-engine }}-${{ matrix.build-mode }}"
           cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
           echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.ARTIFACT_NAME }}
           path: ./${{ env.ARTIFACT_NAME }}.hap
-  
+      - name: Trigger run-hap
+        uses: ./.github/workflows/run-hap.yml
+        with:
+          artifact_name: ${{ env.ARTIFACT_NAME }}
+
   verify-and-build-tester-ecosystem:
     runs-on: ubuntu-latest
     container:

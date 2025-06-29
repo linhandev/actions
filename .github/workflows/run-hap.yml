@@ -1,0 +1,32 @@
+name: Run hap
+
+on:
+  # workflow_dispatch:
+  #   push:
+  #     paths:
+  #       - '.github/workflows/test.yml'
+  workflow_call:
+    inputs:
+      artifact_name:
+        required: true
+        type: string
+concurrency:
+  group: run-hap
+
+jobs:
+  test-hap:
+    runs-on: self-hosted
+    steps:
+      - name: Setup Env
+        run: |
+          echo "PATH=$PATH:~/Desktop/software/command-line-tools/sdk/default/openharmony/toolchains/" >> $GITHUB_ENV
+      - run: |
+          hdc list targets
+      - name: Download HAP artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact_name }}
+
+      - name: Install HAP
+        run: |
+          hdc install ${{ inputs.artifact_name }}.hap
