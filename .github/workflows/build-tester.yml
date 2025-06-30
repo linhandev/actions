@@ -95,13 +95,12 @@ jobs:
           mkdir $ARTIFACT_NAME
           cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME".hap
           cp packages/tester/harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME"-test.hap
-          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
           echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ./${{ env.ARTIFACT_NAME }}
+          name: ${{ steps.artifact-name.outputs.artifact_name }}
+          path: ./${{ steps.artifact-name.outputs.artifact_name }}
 
   run-ut:
     needs: build-tester
