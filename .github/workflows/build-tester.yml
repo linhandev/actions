@@ -45,7 +45,7 @@ on:
         options:
           - jsvm
           - hermes
-        default: 'jsvm'
+        default: 'hermes'
   # schedule:
   #   - cron: "0 */6 * * *"
 
@@ -58,7 +58,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     outputs:
-      artifact_name: ${{ steps.artifact-name.outputs.artifact_name }}
+      artifact_name: ${{ steps.collect.outputs.artifact_name }}
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
@@ -88,19 +88,22 @@ jobs:
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ inputs.build_mode }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --analyze=false --parallel --incremental --no-daemon --debug
-      - name: Rename artifact
-        id: artifact-name
+      - name: Collect artifact
+        id: collect
         run: |
           ARTIFACT_NAME="tester-$(git rev-parse HEAD | cut -c1-16)-${{ inputs.js_engine }}-${{ inputs.build_mode }}"
           mkdir $ARTIFACT_NAME
           cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME".hap
           cp packages/tester/harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME"-test.hap
+          
           echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+          echo "### 📦 Artifact " >> $GITHUB_STEP_SUMMARY
+          ls -la $ARTIFACT_NAME >> $GITHUB_STEP_SUMMARY
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.artifact-name.outputs.artifact_name }}
-          path: ./${{ steps.artifact-name.outputs.artifact_name }}
+          name: ${{ steps.collect.outputs.artifact_name }}
+          path: ./${{ steps.collect.outputs.artifact_name }}
 
   run-ut:
     needs: build-tester

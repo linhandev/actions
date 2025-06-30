@@ -48,6 +48,7 @@ jobs:
           hdc list targets
           hdc uninstall ${{ env.bundle_name }}
           cd ${{ env.hap_name }}
+          tree .
           hdc install ${{ env.hap_name }}.hap
           hdc install ${{ env.hap_name }}-test.hap
 
