@@ -8,7 +8,14 @@ on:
 
 jobs:
   build-tester:
+    strategy:
+      matrix:
+        build_mode: [debug, release]
+        js_engine: [jsvm, hermes]
     uses: linhandev/actions/.github/workflows/build-tester.yml@develop
+    with:
+      build_mode: ${{ matrix.build_mode }}
+      js_engine: ${{ matrix.js_engine }}
     secrets:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}

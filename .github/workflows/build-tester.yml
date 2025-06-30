@@ -6,6 +6,17 @@ on:
   #     - '.github/workflows/build-tester.yml'
   #     - '.github/actions/prepare-rnoh-env/action.yml'
   workflow_call:
+    inputs:
+      build_mode:
+        description: 'Build mode'
+        required: false
+        type: string
+        default: 'debug'
+      js_engine:
+        description: 'JS Engine'
+        required: false
+        type: string
+        default: 'jsvm'
     secrets:
       dockerhub_username:
         description: 'DockerHub username'
@@ -18,6 +29,23 @@ on:
         required: true
 
   workflow_dispatch:
+    inputs:
+      build_mode:
+        description: 'Build mode'
+        required: false
+        type: choice
+        options:
+          - debug
+          - release
+        default: 'debug'
+      js_engine:
+        description: 'JS Engine'
+        required: false
+        type: choice
+        options:
+          - jsvm
+          - hermes
+        default: 'jsvm'
   # schedule:
   #   - cron: "0 */6 * * *"
 
@@ -29,12 +57,6 @@ jobs:
       credentials:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    strategy:
-      matrix:
-        # build-mode: [debug] 
-        build-mode: [debug, release]
-        # js-engine: [jsvm]
-        js-engine: [jsvm, hermes]
     outputs:
       artifact_name: ${{ steps.artifact-name.outputs.artifact_name }}
     steps:
@@ -45,7 +67,7 @@ jobs:
       - name: Build RN
         run: |
           cd packages/tester
-          if [ "${{ matrix.js-engine }}" = "jsvm" ]; then
+          if [ "${{ inputs.js_engine }}" = "jsvm" ]; then
             pnpm run bundle
           else
             npm run bundle:hermes
@@ -55,7 +77,7 @@ jobs:
           # add siging config
           npx ts-node workflow_utils/update_signing_config.ts packages/tester/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
           # uncomment bundle provider
-          if [ "${{ matrix.js-engine }}" = "jsvm" ]; then
+          if [ "${{ inputs.js_engine }}" = "jsvm" ]; then
             npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')"
           else
             npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),"
@@ -64,12 +86,12 @@ jobs:
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
-          hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ matrix.build-mode }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ inputs.build_mode }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Rename artifact
         id: artifact-name
         run: |
-          ARTIFACT_NAME="tester-$(git rev-parse HEAD | cut -c1-16)-${{ matrix.js-engine }}-${{ matrix.build-mode }}"
+          ARTIFACT_NAME="tester-$(git rev-parse HEAD | cut -c1-16)-${{ inputs.js_engine }}-${{ inputs.build_mode }}"
           mkdir $ARTIFACT_NAME
           cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME".hap
           cp packages/tester/harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME"-test.hap
