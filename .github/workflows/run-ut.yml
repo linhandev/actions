@@ -1,9 +1,9 @@
 name: Run ut
 
 on:
-  push:
-    paths:
-      - .github/workflows/run-ut.yml
+  # push:
+  #   paths:
+  #     - .github/workflows/run-ut.yml
   workflow_dispatch:
   workflow_call:
     inputs:
