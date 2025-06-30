@@ -41,15 +41,16 @@ jobs:
           cd packages/tester-ecosystem
           pnpm run test
       - name: Rename artifact
+        id: artifact-name
         run: |
           ARTIFACT_NAME="tester-eco-$(git rev-parse HEAD)"
           cp packages/tester-ecosystem/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./"$ARTIFACT_NAME".hap
-          echo "ARTIFACT_NAME=$ARTIFACT_NAME" >> $GITHUB_ENV
+          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.ARTIFACT_NAME }}
-          path: ./${{ env.ARTIFACT_NAME }}.hap
+          name: ${{ steps.artifact-name.outputs.artifact_name }}
+          path: ./${{ steps.artifact-name.outputs.artifact_name }}.hap
   run-ut:
     needs: verify-and-build-tester-ecosystem
     uses: linhandev/actions/.github/workflows/run-ut.yml@develop

@@ -16,6 +16,7 @@ on:
         default: "com.rnoh.tester"
 concurrency:
   group: run-on-device
+  cancel-in-progress: false
 
 jobs:
   test-hap:
