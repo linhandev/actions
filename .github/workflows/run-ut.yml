@@ -45,10 +45,9 @@ jobs:
       - name: Install HAP
         if: inputs.artifact_name != ''
         run: |
-          hdc list targets
           hdc uninstall ${{ env.bundle_name }}
-          cd ${{ env.hap_name }}
           tree .
+          cd ${{ env.hap_name }}
           hdc install ${{ env.hap_name }}.hap
           hdc install ${{ env.hap_name }}-test.hap
 
