@@ -47,7 +47,6 @@ jobs:
         run: |
           hdc uninstall ${{ env.bundle_name }}
           tree .
-          cd ${{ env.hap_name }}
           hdc install ${{ env.hap_name }}.hap
           hdc install ${{ env.hap_name }}-test.hap
 
