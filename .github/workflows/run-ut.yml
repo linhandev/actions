@@ -50,7 +50,7 @@ jobs:
           hdc install ${{ env.hap_name }}.hap
           hdc install ${{ env.hap_name }}-test.hap
 
-      - name: Install hap for local debug
+      - name: Install hap (for testing ci only, skipped when triggered by other workflow)
         if: inputs.artifact_name == ''
         run: |
           hdc uninstall ${{ env.bundle_name }}
