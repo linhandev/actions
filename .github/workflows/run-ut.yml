@@ -14,6 +14,10 @@ on:
         required: false
         type: string
         default: "com.rnoh.tester"
+      repeat_test_for:
+        required: false
+        type: number
+        default: 1
 concurrency:
   group: run-on-device
   cancel-in-progress: false
@@ -27,6 +31,7 @@ jobs:
           echo "PATH=$PATH:~/Desktop/software/command-line-tools/sdk/default/openharmony/toolchains/" >> $GITHUB_ENV
           echo "hap_name=${{ inputs.artifact_name || 'sample'}}" >> $GITHUB_ENV
           echo "bundle_name=${{ inputs.bundle_name || 'com.rnoh.tester'}}" >> $GITHUB_ENV
+          echo "repeat_test_for=${{ inputs.repeat_test_for || 1}}" >> $GITHUB_ENV
 
       - name: Test has device
         run: |
@@ -69,7 +74,38 @@ jobs:
           hdc rport tcp:8082 tcp:8082
           hdc rport tcp:8083 tcp:8083
 
-          hdc shell aa test -b ${{ inputs.bundle_name || 'com.rnoh.tester'}} -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 120000 | tee test_output.log
+          successful_runs=0
+
+          for ((i=1; i<=$repeat_test_for; i++)); do            
+            # Run test
+            hdc shell aa test -b $bundle_name -m entry_test -s unittest OpenHarmonyTestRunner -s class tester -s timeout 120000 | tee test_output_run_$i.log
+            
+            # Check test result
+            test_passed=true
+            if grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output_run_$i.log; then
+              echo "Test run $i: ❌ Error or Failure found."  >> $GITHUB_STEP_SUMMARY
+              test_passed=false
+            fi
+            if ! grep -q "Pass: [1-9]" test_output_run_$i.log; then
+              echo "Test run $i: ❌ No passing tests found."  >> $GITHUB_STEP_SUMMARY
+              test_passed=false
+            fi
+
+            if [ "$test_passed" = true ]; then
+              successful_runs=$((successful_runs + 1))
+              echo "✅ Test run $i: PASSED"
+            fi
+
+            # Add a small delay between runs if there are multiple runs
+            if [ $i -lt $repeat_test_for ]; then
+              sleep 5
+            fi
+          done
+
+          # Generate summary
+          echo "## Summary" >> $GITHUB_STEP_SUMMARY
+          echo "$successful_runs / $repeat_test_for passed, pass rate $((successful_runs * 100 / repeat_test_for))%" >> $GITHUB_STEP_SUMMARY
+
 
           # stop record, pull video to runner
           sleep 1
@@ -84,13 +120,7 @@ jobs:
           hdc shell rm $video_path
           cd -
 
-          # test result
-          if grep -q "Error: [1-9]\|Failure: [1-9]\|Error in" test_output.log; then
-            echo "::error::Error or Failure found during test."
-            exit 1
-          fi
-          if ! grep -q "Pass: [1-9]" test_output.log; then
-            echo "::error::No passing tests found."
+          if [ $successful_runs -ne $repeat_test_for ]; then
             exit 1
           fi
 
