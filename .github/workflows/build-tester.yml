@@ -99,7 +99,7 @@ jobs:
           cd $ARTIFACT_NAME
           echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
           echo "### 📦 Artifact " >> $GITHUB_STEP_SUMMARY
-          for f in *; do if [ -f "$f" ]; then echo "$f $((($(stat -f%z "$f") + 512)/1024))K"; fi; done >> $GITHUB_STEP_SUMMARY
+          for f in *; do if [ -f "$f" ]; then echo "$f $((($(stat -c%s "$f") + 512)/1024))K"; fi; done >> $GITHUB_STEP_SUMMARY
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
