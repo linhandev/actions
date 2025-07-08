@@ -3,7 +3,7 @@ name: Build Samples
 on:
   push:
     paths:
-      - '.github/workflows/build-sample.yml'
+      - ".github/workflows/build-sample.yml"
   workflow_dispatch:
 
 jobs:
@@ -58,8 +58,8 @@ jobs:
     needs: build-npm-packages
     strategy:
       matrix:
-        sample-name: 
-          - sample-basic
+        sample-name:
+          - Capture_bundle
     container:
       image: aliaslsrmrf/clt
       credentials:
@@ -71,28 +71,27 @@ jobs:
         with:
           name: ${{ needs.build-npm-packages.outputs.commit_hash }}-npm-packages
           path: ./downloaded-artifacts
-      
+
       - name: Get artifact paths
         id: paths
         run: |
           CLI_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-cli-*.tgz" -type f)
           HARMONY_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-*.tgz" -type f | grep -v cli)
-          
+
           CLI_ABSOLUTE_PATH=$(realpath "$CLI_ARTIFACT")
           HARMONY_ABSOLUTE_PATH=$(realpath "$HARMONY_ARTIFACT")
           BUILD_SCRIPT_PATH="$GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh"
-          
+
           echo "Found CLI artifact: $CLI_ABSOLUTE_PATH"
           echo "Found Harmony artifact: $HARMONY_ABSOLUTE_PATH"
           echo "Build script path: $BUILD_SCRIPT_PATH"
-
           cat #BUILD_SCRIPT_PATH
 
           cd docs/Samples/${{ matrix.sample-name }}
-                    
+
           # Export variables so they're available in the script
           export CLI_PATH="$CLI_ABSOLUTE_PATH"
           export HARMONY_PATH="$HARMONY_ABSOLUTE_PATH"
           export SIGNING_CONFIG_MAP='${{ secrets.SIGNING_CONFIG_MAP }}'
-          
+
           bash -ex "$GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh"
