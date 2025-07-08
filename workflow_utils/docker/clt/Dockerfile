@@ -1,7 +1,7 @@
 FROM ubuntu:noble
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
-COPY command-line-tools /opt/command-line-tools
+COPY ./command-line-tools /opt/command-line-tools
 COPY ./ohos /root/.ohos
 
 RUN apt update

@@ -2,6 +2,7 @@ set -ex
 
 cd ReactProject
 npm i ${HARMONY_PATH}
+npm i ${}
 npm i
 npm run dev
 cd -
