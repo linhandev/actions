@@ -69,8 +69,8 @@ jobs:
       - name: Fetch workflow file
         uses: actions/checkout@v4
 
-      - name: Initialize RNOH
-        uses: ./.github/actions/init-rnoh
+      - name: Prepare build environment
+        uses: ./.github/actions/prepare-build-env
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
