@@ -23,13 +23,12 @@ jobs:
         uses: ./.github/actions/init-rnoh
       - name: Build har
         run: |
-          cd packages/react-native-harmony-cli
-          pnpm pack
-          cd -
+          pnpm concurrently \
+            --kill-others-on-fail \
+            --names "CLI,HARMONY" \
+            "cd packages/react-native-harmony-cli && pnpm pack" \
+            "cd packages/react-native-harmony && pnpm pack"
 
-          cd packages/react-native-harmony
-          pnpm pack
-          cd -
       - name: Collect artifact
         id: collect
         run: |
@@ -47,6 +46,7 @@ jobs:
           echo "commit_hash=${COMMIT_HASH}" >> $GITHUB_OUTPUT
           echo "### 📦 Artifact " >> $GITHUB_STEP_SUMMARY
           for f in *; do if [ -f "$f" ]; then echo "$f $((($(stat -c%s "$f") + 512)/1024))K"; fi; done >> $GITHUB_STEP_SUMMARY
+
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
@@ -80,13 +80,14 @@ jobs:
           
           CLI_ABSOLUTE_PATH=$(realpath "$CLI_ARTIFACT")
           HARMONY_ABSOLUTE_PATH=$(realpath "$HARMONY_ARTIFACT")
-          
-          echo "CLI_PATH=$CLI_ABSOLUTE_PATH" >> $GITHUB_ENV
-          echo "HARMONY_PATH=$HARMONY_ABSOLUTE_PATH" >> $GITHUB_ENV
+          BUILD_SCRIPT_PATH="$GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh"
           
           echo "Found CLI artifact: $CLI_ABSOLUTE_PATH"
           echo "Found Harmony artifact: $HARMONY_ABSOLUTE_PATH"
+          echo "Build script path: $BUILD_SCRIPT_PATH"
+
+          cat #BUILD_SCRIPT_PATH
           
           cd docs/Samples/${{ matrix.sample-name }}
+          SIGNING_CONFIG_MAP='${{ secrets.SIGNING_CONFIG_MAP }}'
           source $GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh
-          
