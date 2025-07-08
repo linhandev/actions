@@ -1,0 +1,34 @@
+name: Prepare RNOH build environment
+description: Prepare RNOH build environment
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout ohos_react_native
+      uses: actions/checkout@v4
+      with:
+        repository: linhandev/ohos_react_native
+        ref: 0.77.1-rc.1-ohos
+        path: code_temp
+
+    - name: Move ohos_react_native to root
+      shell: bash
+      run: |
+        rm -rf package.json .gitignore README.md tsconfig.json .git
+        shopt -s dotglob
+        mv -n code_temp/* .
+        rmdir code_temp
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+        cache: 'pnpm'
+    
+    - name: Config git and npm dep
+      shell: bash
+      run: |
+        git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        touch ~/.npmrc
+        bash workflow_utils/install_deps.sh

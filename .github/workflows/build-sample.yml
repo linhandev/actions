@@ -7,8 +7,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-har:
+  build-npm-packages:
     runs-on: ubuntu-latest
+    outputs:
+      commit_hash: ${{ steps.collect.outputs.commit_hash }}
     container:
       image: aliaslsrmrf/clt
       credentials:
@@ -17,8 +19,8 @@ jobs:
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
-      - name: Prepare RNOH build environment
-        uses: ./.github/actions/prepare-rnoh-env
+      - name: Initialize RNOH
+        uses: ./.github/actions/init-rnoh
       - name: Build har
         run: |
           cd packages/react-native-harmony-cli
@@ -48,5 +50,43 @@ jobs:
       - name: Save built artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.collect.outputs.commit_hash }}
+          name: ${{ steps.collect.outputs.commit_hash }}-npm-packages
           path: ./artifacts
+
+  build-sample:
+    runs-on: ubuntu-latest
+    needs: build-npm-packages
+    strategy:
+      matrix:
+        sample-name: 
+          - sample-basic
+    container:
+      image: aliaslsrmrf/clt
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-npm-packages.outputs.commit_hash }}-npm-packages
+          path: ./downloaded-artifacts
+      
+      - name: Get artifact paths
+        id: paths
+        run: |
+          CLI_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-cli-*.tgz" -type f)
+          HARMONY_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-*.tgz" -type f | grep -v cli)
+          
+          CLI_ABSOLUTE_PATH=$(realpath "$CLI_ARTIFACT")
+          HARMONY_ABSOLUTE_PATH=$(realpath "$HARMONY_ARTIFACT")
+          
+          echo "CLI_PATH=$CLI_ABSOLUTE_PATH" >> $GITHUB_ENV
+          echo "HARMONY_PATH=$HARMONY_ABSOLUTE_PATH" >> $GITHUB_ENV
+          
+          echo "Found CLI artifact: $CLI_ABSOLUTE_PATH"
+          echo "Found Harmony artifact: $HARMONY_ABSOLUTE_PATH"
+          
+          cd docs/Samples/${{ matrix.sample-name }}
+          source $GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh
+          

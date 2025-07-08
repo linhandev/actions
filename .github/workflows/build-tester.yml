@@ -63,7 +63,7 @@ jobs:
       - name: Fetch workflow file
         uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
-        uses: ./.github/actions/prepare-rnoh-env
+        uses: ./.github/actions/init-rnoh
       - name: Build RN
         run: |
           cd packages/tester

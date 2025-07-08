@@ -1,0 +1,28 @@
+name: Initialize RNOH
+description: Initialize RNOH workspace with submodules and dependencies
+runs:
+  using: "composite"
+  steps:
+    - name: Prepare build environment
+      uses: ./.github/actions/prepare-build-env
+      
+    - name: Change submodule origin
+      shell: bash
+      run: |
+        sed -i 's|https://gl.swmansion.com/rnoh/react-native-core.git|https://github.com/linhandev/react-native-core.git|g' .gitmodules
+        # dont show progress to avoid too much log
+        sed -i 's|git submodule update --init --recursive --progress|git submodule update --init --recursive|g' package.json
+
+    - name: Cache git submodules
+      uses: actions/cache@v4
+      with:
+        path: |
+          .git/modules
+          packages/tester/harmony/react_native_openharmony/src/main/cpp/third-party/{boost,double-conversion,fmt,glog,libevent,fast_float,folly,hermes}
+        key: ${{ runner.os }}-submodules-${{ hashFiles('.gitmodules') }}
+        restore-keys: |
+          ${{ runner.os }}-submodules-
+
+    - name: init-ws
+      run: pnpm init-ws
+      shell: bash
