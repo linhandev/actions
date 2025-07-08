@@ -68,15 +68,17 @@ jobs:
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
+
       - name: Initialize RNOH
         uses: ./.github/actions/init-rnoh
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-npm-packages.outputs.commit_hash }}-npm-packages
           path: ./downloaded-artifacts
 
-      - name: Get artifact paths
+      - name: Build sample
         id: paths
         run: |
           CLI_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-cli-*.tgz" -type f)
@@ -95,3 +97,11 @@ jobs:
           cd docs/Samples/${{ matrix.sample-name }}
 
           bash -ex $BUILD_SCRIPT_PATH
+
+          find . -name "entry-default-signed.hap" -type f -exec mv {} $GITHUB_WORKSPACE/entry-default-signed.hap \;
+
+      - name: Save HAP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.sample-name }}-hap-${{ needs.build-npm-packages.outputs.commit_hash }}
+          path: entry-default-signed.hap
