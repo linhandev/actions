@@ -1,4 +1,4 @@
-name: Build Tester
+name: Build Samples
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Fetch workflow file
         uses: actions/checkout@v4
-      - name: Prepare RNOH build enviroment
+      - name: Prepare RNOH build environment
         uses: ./.github/actions/prepare-rnoh-env
       - name: Build har
         run: |
@@ -35,11 +35,11 @@ jobs:
           mkdir artifacts
           CLI_PATH=$(ls packages/react-native-harmony-cli/react-native-oh-react-native-harmony-cli-*.tgz)
           CLI_NAME=$(basename "$CLI_PATH" .tgz)
-          cp CLI_PATH ./artifacts/"$CLI_NAME"-"$COMMIT_HASH".tgz
+          cp $CLI_PATH ./artifacts/"$CLI_NAME"-"$COMMIT_HASH".tgz
 
           HARMONY_PATH=$(ls packages/react-native-harmony/react-native-oh-react-native-harmony-*.tgz)
           HARMONY_NAME=$(basename "$HARMONY_PATH" .tgz)
-          cp HARMONY_PATH ./artifacts/"$HARMONY_NAME"-"$COMMIT_HASH".tgz
+          cp $HARMONY_PATH ./artifacts/"$HARMONY_NAME"-"$COMMIT_HASH".tgz
 
           cd artifacts
           echo "commit_hash=${COMMIT_HASH}" >> $GITHUB_OUTPUT
