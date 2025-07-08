@@ -90,8 +90,8 @@ jobs:
           echo "Found CLI artifact: $CLI_PATH"
           echo "Found Harmony artifact: $HARMONY_PATH"
           echo "Build script path: $BUILD_SCRIPT_PATH"
-          cat #BUILD_SCRIPT_PATH
+          cat $BUILD_SCRIPT_PATH
 
           cd docs/Samples/${{ matrix.sample-name }}
 
-          bash -ex "$GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh"
+          bash -ex $BUILD_SCRIPT_PATH
