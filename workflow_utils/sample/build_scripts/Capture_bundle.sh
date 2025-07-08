@@ -1,9 +1,8 @@
 set -ex
 
 cd ReactProject
-npm i ${HARMONY_PATH}
-npm i --save-dev ${CLI_PATH}
-npm i
+npm i ${HARMONY_PATH} --save-dev ${CLI_PATH}
+cat package.json
 npm run dev
 cd -
 
