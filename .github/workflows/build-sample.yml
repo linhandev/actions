@@ -87,6 +87,7 @@ jobs:
           echo "Build script path: $BUILD_SCRIPT_PATH"
           cat #BUILD_SCRIPT_PATH
 
+          ls
           cd docs/Samples/${{ matrix.sample-name }}
 
           # Export variables so they're available in the script
