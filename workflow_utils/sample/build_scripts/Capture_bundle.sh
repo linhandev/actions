@@ -7,7 +7,7 @@ npm run dev
 cd -
 
 npm install @tsconfig/recommended json5
-npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ../NativeProject/build-profile.json5 com.example.capturebundle "$SIGNING_CONFIG_MAP"
+npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.capturebundle "$SIGNING_CONFIG_MAP"
 
 cd NativeProject
 ohpm i
