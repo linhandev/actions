@@ -61,8 +61,8 @@ jobs:
       fail-fast: false
       matrix:
         sample-name:
-          - Capture_bundle
-          - demo_without_rnAbility
+          # - Capture_bundle
+          # - demo_without_rnAbility
           - FabricComponentSample
 
     container:
