@@ -58,6 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-npm-packages
     strategy:
+      fail-fast: false
       matrix:
         sample-name:
           - Capture_bundle
