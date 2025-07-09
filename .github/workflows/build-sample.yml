@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - ".github/workflows/build-sample.yml"
+      - "workflow_utils/sample/build_scripts/**"
   workflow_dispatch:
 
 jobs:
