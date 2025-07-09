@@ -60,7 +60,9 @@ jobs:
     strategy:
       matrix:
         sample-name:
-          - Capture_bundle
+          # - Capture_bundle
+          - demo_without_rnAbility
+
     container:
       image: aliaslsrmrf/clt
       credentials:
