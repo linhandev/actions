@@ -94,6 +94,11 @@ jobs:
           export SIGNING_CONFIG_MAP='${{ secrets.SIGNING_CONFIG_MAP }}'
           BUILD_SCRIPT_PATH="$GITHUB_WORKSPACE/workflow_utils/sample/build_scripts/${{ matrix.sample-name }}.sh"
 
+          update_package_dependencies() {
+              jq --arg harmony_path "$HARMONY_PATH" '.dependencies["@react-native-oh/react-native-harmony"] = $harmony_path' package.json > package.json.tmp && mv package.json.tmp package.json
+              jq --arg cli_path "$CLI_PATH" '.devDependencies["@react-native-oh/cli"] = $cli_path' package.json > package.json.tmp && mv package.json.tmp package.json
+          }
+
           echo "Found CLI artifact: $CLI_PATH"
           echo "Found Harmony artifact: $HARMONY_PATH"
           echo "Build script path: $BUILD_SCRIPT_PATH"
@@ -101,7 +106,9 @@ jobs:
 
           cd docs/Samples/${{ matrix.sample-name }}
 
-          bash -ex $BUILD_SCRIPT_PATH
+          set -ex
+          npm install @tsconfig/recommended json5
+          source $BUILD_SCRIPT_PATH
 
           find . -name "entry-default-signed.hap" -type f -exec mv {} $GITHUB_WORKSPACE/entry-default-signed.hap \;
 

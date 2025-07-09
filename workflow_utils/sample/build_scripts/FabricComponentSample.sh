@@ -1,6 +1,3 @@
-set -ex
-
-npm install @tsconfig/recommended json5
 npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.fabric "$SIGNING_CONFIG_MAP"
 
 cd fabric-component-sample-package
@@ -8,7 +5,8 @@ npm pack
 cd -
 
 cd ReactProject
-npm i ${HARMONY_PATH} --save-dev ${CLI_PATH}
+update_package_dependencies
+npm i
 cat package.json
 cd -
 
