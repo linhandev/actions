@@ -61,9 +61,10 @@ jobs:
       fail-fast: false
       matrix:
         sample-name:
-          - Capture_bundle
-          - demo_without_rnAbility
-          - FabricComponentSample
+          # - Capture_bundle
+          # - demo_without_rnAbility
+          # - FabricComponentSample
+          - FrameNodeSample
 
     container:
       image: aliaslsrmrf/clt
