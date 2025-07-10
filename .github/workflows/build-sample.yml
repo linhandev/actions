@@ -118,7 +118,7 @@ jobs:
 
           npm install @tsconfig/recommended json5
           set -ex
-          bash $BUILD_SCRIPT_PATH
+          source $BUILD_SCRIPT_PATH
 
           find . -name "entry-default-signed.hap" -type f -exec mv {} $GITHUB_WORKSPACE/entry-default-signed.hap \;
 
