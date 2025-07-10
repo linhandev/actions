@@ -1,11 +1,10 @@
-set -ex
+#!/bin/bash
 
-npm install @tsconfig/recommended json5
+source "$(dirname "$0")/common.sh"
 npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.capturebundle "$SIGNING_CONFIG_MAP"
 
 cd ReactProject
-npm i ${HARMONY_PATH} --save-dev ${CLI_PATH}
-cat package.json
+install_dependencies
 npm run dev
 cd -
 

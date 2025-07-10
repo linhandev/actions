@@ -1,3 +1,7 @@
+#!/bin/bash
+
+# Source common utilities
+source "$(dirname "$0")/common.sh"
 npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.fabric "$SIGNING_CONFIG_MAP"
 
 cd fabric-component-sample-package
@@ -5,9 +9,7 @@ npm pack
 cd -
 
 cd ReactProject
-update_package_dependencies
-npm i
-cat package.json
+install_dependencies
 cd -
 
 cd NativeProject
