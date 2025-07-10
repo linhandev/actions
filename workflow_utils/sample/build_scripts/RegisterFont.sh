@@ -1,4 +1,4 @@
-npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NavigatRegisterFontNativeProjectionApp/build-profile.json5 com.example.registerfont "$SIGNING_CONFIG_MAP"
+npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./RegisterFontNativeProject/build-profile.json5 com.example.registerfont "$SIGNING_CONFIG_MAP"
 
 cd RegisterFontRnProject
 update_dependencies
