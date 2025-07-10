@@ -1,12 +1,12 @@
-npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.capturebundle "$SIGNING_CONFIG_MAP"
+npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NavigationApp/build-profile.json5 com.example.navigationapp "$SIGNING_CONFIG_MAP"
 
-cd ReactProject
+cd NavigationProject/MainProject
 update_dependencies
-npm i
+npm run setup
 npm run dev
 cd -
 
-cd NativeProject
+cd NavigationApp
 ohpm i
 hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
 hvigorw --mode module -p module=entry@default -p product=default -p buildMode=debug -p requiredDeviceType=phone assembleHap --analyze=false --parallel --incremental --no-daemon --debug

@@ -5,7 +5,8 @@ npm pack
 cd -
 
 cd ReactProject
-install_dependencies
+update_dependencies
+npm i
 cd -
 
 cd NativeProject

@@ -1,9 +1,15 @@
-npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.capturebundle "$SIGNING_CONFIG_MAP"
+npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.mutilbundle "$SIGNING_CONFIG_MAP"
 
-cd ReactProject
+cd FlightRN
 update_dependencies
 npm i
-npm run dev
+npm run dev:all
+cd -
+
+cd HotelRN
+update_dependencies
+npm i
+npm run dev:all
 cd -
 
 cd NativeProject

@@ -61,10 +61,12 @@ jobs:
       fail-fast: false
       matrix:
         sample-name:
-          # - Capture_bundle
-          # - demo_without_rnAbility
-          # - FabricComponentSample
+          - Capture_bundle
+          - demo_without_rnAbility
+          - FabricComponentSample
           - FrameNodeSample
+          - MutilBundleSample
+          - NativeReactNavSwitch
 
     container:
       image: aliaslsrmrf/clt
@@ -83,7 +85,7 @@ jobs:
         with:
           name: ${{ needs.build-npm-packages.outputs.commit_hash }}-npm-packages
           path: ./downloaded-artifacts
-      
+
       - name: Temp Install dependencies
         run: |
           apt-get install -y jq
@@ -107,14 +109,13 @@ jobs:
 
           cd docs/Samples/${{ matrix.sample-name }}
 
-          install_dependencies() {
+          update_dependencies() {
               jq --arg harmony_path "$HARMONY_PATH" '.dependencies["@react-native-oh/react-native-harmony"] = $harmony_path' package.json >package.json.tmp && mv package.json.tmp package.json
 
               if jq -e '.devDependencies["@react-native-oh/react-native-harmony-cli"]' package.json >/dev/null; then
                   jq --arg cli_path "$CLI_PATH" '.devDependencies["@react-native-oh/react-native-harmony-cli"] = $cli_path' package.json >package.json.tmp && mv package.json.tmp package.json
               fi
               cat package.json
-              npm i
           }
 
           npm install @tsconfig/recommended json5

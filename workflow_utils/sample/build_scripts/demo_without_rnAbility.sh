@@ -1,7 +1,8 @@
 npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.rnability "$SIGNING_CONFIG_MAP"
 
 cd RNProject/MainProject
-install_dependencies
+update_dependencies
+npm i
 npm run dev
 cd -
 

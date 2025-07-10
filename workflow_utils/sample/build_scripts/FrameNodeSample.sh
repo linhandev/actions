@@ -1,7 +1,8 @@
 npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./FrameNodeSampleApp/build-profile.json5 com.example.framenode "$SIGNING_CONFIG_MAP"
 
 cd GenerateBundle
-install_dependencies
+update_dependencies
+npm i
 npm run dev
 cd -
 
