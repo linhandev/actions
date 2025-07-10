@@ -61,18 +61,18 @@ jobs:
       fail-fast: false
       matrix:
         sample-name:
-          # - Capture_bundle
-          # - demo_without_rnAbility
-          # - FabricComponentSample
-          # - FrameNodeSample
-          # - MutilBundleSample
-          # - NativeReactNavSwitch
+          - Capture_bundle
+          - demo_without_rnAbility
+          - FabricComponentSample
+          - FrameNodeSample
+          - MutilBundleSample
+          - NativeReactNavSwitch
           - RegisterFont
-          # - RootTagSample
-          # - Sample
-          # - Sandbox
-          # - using_RNSurface
-          # - using_turboModule
+          - RootTagSample
+          - Sample
+          - Sandbox
+          - using_RNSurface
+          - using_turboModule
 
     container:
       image: aliaslsrmrf/clt
