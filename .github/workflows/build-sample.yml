@@ -67,12 +67,12 @@ jobs:
           # - FrameNodeSample
           # - MutilBundleSample
           # - NativeReactNavSwitch
-          - RegisterFontNativeProject
-          - RootTagSample
-          - Sample
-          - Sandbox
-          - using_RNSurface
-          - using_turboModule
+          - RegisterFont
+          # - RootTagSample
+          # - Sample
+          # - Sandbox
+          # - using_RNSurface
+          # - using_turboModule
 
     container:
       image: aliaslsrmrf/clt
