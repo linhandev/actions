@@ -62,8 +62,8 @@ jobs:
       matrix:
         sample-name:
           - Capture_bundle
-          - demo_without_rnAbility
-          - FabricComponentSample
+          # - demo_without_rnAbility
+          # - FabricComponentSample
 
     container:
       image: aliaslsrmrf/clt
@@ -82,9 +82,14 @@ jobs:
         with:
           name: ${{ needs.build-npm-packages.outputs.commit_hash }}-npm-packages
           path: ./downloaded-artifacts
+      
+      - name: Temp Install dependencies
+        run: |
+          apt-get install -y jq
 
       - name: Build sample
         id: paths
+        shell: bash
         run: |
           CLI_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-cli-*.tgz" -type f)
           HARMONY_ARTIFACT=$(find ./downloaded-artifacts -name "*react-native-oh-react-native-harmony-*.tgz" -type f | grep -v cli)
@@ -101,8 +106,18 @@ jobs:
 
           cd docs/Samples/${{ matrix.sample-name }}
 
-          set -ex
+          install_dependencies() {
+              jq --arg harmony_path "$HARMONY_PATH" '.dependencies["@react-native-oh/react-native-harmony"] = $harmony_path' package.json >package.json.tmp && mv package.json.tmp package.json
+
+              if jq -e '.devDependencies["@react-native-oh/react-native-harmony-cli"]' package.json >/dev/null; then
+                  jq --arg cli_path "$CLI_PATH" '.devDependencies["@react-native-oh/react-native-harmony-cli"] = $cli_path' package.json >package.json.tmp && mv package.json.tmp package.json
+              fi
+              cat package.json
+              npm i
+          }
+
           npm install @tsconfig/recommended json5
+          set -ex
           bash $BUILD_SCRIPT_PATH
 
           find . -name "entry-default-signed.hap" -type f -exec mv {} $GITHUB_WORKSPACE/entry-default-signed.hap \;

@@ -1,6 +1,4 @@
 #!/bin/bash
-
-source "$(dirname "$0")/common.sh"
 npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./NativeProject/build-profile.json5 com.example.capturebundle "$SIGNING_CONFIG_MAP"
 
 cd ReactProject
