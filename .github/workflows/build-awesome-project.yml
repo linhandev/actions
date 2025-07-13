@@ -74,7 +74,7 @@ jobs:
           npm run init-sample-project
           
           cd __SampleProject__
-          # npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./harmony/build-profile.json5 com.rnoh.sample_project '${{ secrets.SIGNING_CONFIG_MAP }}'
+          npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./harmony/build-profile.json5 com.rnoh.sample_project '${{ secrets.SIGNING_CONFIG_MAP }}'
 
           if [ "${{ env.BUILD_MODE }}" = "release" ]; then
             npx react-native bundle-harmony --dev=false --minify=true --js-engine=${{ env.JS_ENGINE }} --hermesc-dir ./node_modules/react-native/sdks/hermesc
