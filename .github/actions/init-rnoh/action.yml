@@ -1,5 +1,10 @@
 name: Initialize RNOH
 description: Initialize RNOH workspace with submodules and dependencies
+inputs:
+  run_init_ws:
+    description: 'Whether to run pnpm init-ws (true) or just git submodule update (false)'
+    required: false
+    default: 'true'
 runs:
   using: "composite"
   steps:
@@ -24,5 +29,12 @@ runs:
           ${{ runner.os }}-submodules-
 
     - name: init-ws
-      run: pnpm init-ws
+      run: |
+        if [ "${{ inputs.run_init_ws }}" = "true" ]; then
+          echo "Running full pnpm init-ws..."
+          pnpm init-ws
+        else
+          echo "Running git submodule update only..."
+          git submodule update --init --recursive --jobs 16
+        fi
       shell: bash
