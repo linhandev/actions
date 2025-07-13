@@ -1,10 +1,10 @@
 name: Build Tester
 
 on:
-  # push:
-  #   paths:
-  #     - '.github/workflows/build-tester.yml'
-  #     - '.github/actions/prepare-rnoh-env/action.yml'
+  push:
+    paths:
+      - '.github/workflows/build-tester.yml'
+      - '.github/actions/**'
   workflow_call:
     inputs:
       build_mode:
@@ -52,6 +52,9 @@ on:
 jobs:
   build-tester:
     runs-on: ubuntu-latest
+    env:
+      JS_ENGINE: ${{ inputs.js_engine || 'jsvm' }}
+      BUILD_MODE: ${{ inputs.build_mode || 'release' }}
     container:
       image: aliaslsrmrf/clt
       credentials:
@@ -64,10 +67,11 @@ jobs:
         uses: actions/checkout@v4
       - name: Prepare RNOH build enviroment
         uses: ./.github/actions/init-rnoh
+
       - name: Build RN
         run: |
           cd packages/tester
-          if [ "${{ inputs.js_engine }}" = "jsvm" ]; then
+          if [ "${{ env.JS_ENGINE }}" = "jsvm" ]; then
             pnpm run bundle
           else
             npm run bundle:hermes
@@ -77,7 +81,7 @@ jobs:
           # add siging config
           npx ts-node workflow_utils/update_signing_config.ts packages/tester/harmony/build-profile.json5 com.rnoh.tester '${{ secrets.SIGNING_CONFIG_MAP }}'
           # uncomment bundle provider
-          if [ "${{ inputs.js_engine }}" = "jsvm" ]; then
+          if [ "${{ env.JS_ENGINE }}" = "jsvm" ]; then
             npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'bundle.harmony.js')"
           else
             npx ts-node workflow_utils/uncomment.ts packages/tester/harmony/entry/src/main/ets/pages/Index.ets "new ResourceJSBundleProvider(this.rnohCoreContext.uiAbilityContext.resourceManager, 'hermes_bundle.hbc'),"
@@ -86,12 +90,12 @@ jobs:
           cd packages/tester/harmony
           ohpm i
           hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
-          hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ inputs.build_mode }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ env.BUILD_MODE }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
           hvigorw --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --analyze=false --parallel --incremental --no-daemon --debug
       - name: Collect artifact
         id: collect
         run: |
-          ARTIFACT_NAME="tester-$(git rev-parse HEAD | cut -c1-16)-${{ inputs.js_engine }}-${{ inputs.build_mode }}"
+          ARTIFACT_NAME="tester-$(git rev-parse HEAD | cut -c1-16)-${{ env.JS_ENGINE }}-${{ env.BUILD_MODE }}"
           mkdir $ARTIFACT_NAME
           cp packages/tester/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME".hap
           cp packages/tester/harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME"-test.hap
