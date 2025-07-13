@@ -1,1 +1,1 @@
-pnpm install --ignore-scripts --no-optional -g json5@2.2.3 @tsconfig/recommended
+# pnpm install --ignore-scripts --no-optional -g json5@2.2.3 @tsconfig/recommended
