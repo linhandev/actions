@@ -1,0 +1,121 @@
+name: Build Awesome Project
+
+on:
+  push:
+    paths:
+      - '.github/workflows/build-awesome-project.yml'
+      - '.github/actions/**'
+  workflow_call:
+    inputs:
+      build_mode:
+        description: 'Build mode'
+        required: false
+        type: string
+        default: 'debug'
+      js_engine:
+        description: 'JS Engine'
+        required: false
+        type: string
+        default: 'jsvm'
+    secrets:
+      dockerhub_username:
+        description: 'DockerHub username'
+        required: true
+      dockerhub_token:
+        description: 'DockerHub token'
+        required: true
+      signing_config_map:
+        description: 'Signing config map'
+        required: true
+  workflow_dispatch:
+    inputs:
+      build_mode:
+        description: 'Build mode'
+        required: false
+        type: choice
+        options:
+          - debug
+          - release
+        default: 'debug'
+      js_engine:
+        description: 'JS Engine'
+        required: false
+        type: choice
+        options:
+          - jsvm
+          - hermes
+        default: 'hermes'
+  # schedule:
+  #   - cron: "0 */6 * * *"
+
+jobs:
+  build-awesome-project:
+    runs-on: ubuntu-latest
+    env:
+      JS_ENGINE: ${{ inputs.js_engine || 'jsvm' }}
+      BUILD_MODE: ${{ inputs.build_mode || 'release' }}
+    container:
+      image: aliaslsrmrf/clt
+      credentials:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    outputs:
+      artifact_name: ${{ steps.collect.outputs.artifact_name }}
+    steps:
+      - name: Fetch workflow file
+        uses: actions/checkout@v4
+      - name: Initialize submodules
+        uses: ./.github/actions/init-rnoh
+        with:
+          run_init_ws: false
+      - name: Init sample project
+        run: |
+          cd packages/tester
+          npm run init-sample-project
+          
+          cd __SampleProject__
+          # npx ts-node $GITHUB_WORKSPACE/workflow_utils/update_signing_config.ts ./harmony/build-profile.json5 com.rnoh.sample_project '${{ secrets.SIGNING_CONFIG_MAP }}'
+
+          if [ "${{ env.BUILD_MODE }}" = "release" ]; then
+            npx react-native bundle-harmony --dev=false --minify=true --js-engine=${{ env.JS_ENGINE }} --hermesc-dir ./node_modules/react-native/sdks/hermesc
+          else
+            npx react-native bundle-harmony --js-engine=${{ env.JS_ENGINE }} --hermesc-dir ./node_modules/react-native/sdks/hermesc
+          fi
+          
+          cd harmony
+          ohpm i
+          hvigorw --sync -p product=default --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@default -p isOhosTest=true -p product=default -p buildMode=${{ env.BUILD_MODE }} assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+          hvigorw --mode module -p module=entry@ohosTest -p isOhosTest=true -p buildMode=test assembleHap --analyze=false --parallel --incremental --no-daemon --debug
+      - name: Collect artifact
+        id: collect
+        run: |
+          ARTIFACT_NAME="awesome-project-$(git rev-parse HEAD | cut -c1-16)-${{ env.JS_ENGINE }}-${{ env.BUILD_MODE }}"
+          mkdir $ARTIFACT_NAME
+          mv packages/tester/__SampleProject__/harmony/entry/build/default/outputs/default/entry-default-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME".hap
+          cp packages/tester/__SampleProject__/harmony/entry/build/default/outputs/ohosTest/entry-ohosTest-signed.hap ./$ARTIFACT_NAME/"$ARTIFACT_NAME"-test.hap
+          
+          cd $ARTIFACT_NAME
+          echo "artifact_name=${ARTIFACT_NAME}" >> $GITHUB_OUTPUT
+          echo "### 📦 Artifact " >> $GITHUB_STEP_SUMMARY
+          for f in *; do if [ -f "$f" ]; then echo "$f $((($(stat -c%s "$f") + 512)/1024))K"; fi; done >> $GITHUB_STEP_SUMMARY
+      - name: Save hap
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.collect.outputs.artifact_name }}
+          path: ./${{ steps.collect.outputs.artifact_name }}
+      - name: Clean workspace
+        run: |
+          cd packages/tester/__SampleProject__
+          git clean -dfx
+      - name: Save sample project workspace
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.collect.outputs.artifact_name }}-workspace
+          path: ./packages/tester/__SampleProject__
+
+  run-ut:
+    needs: build-awesome-project
+    uses: linhandev/actions/.github/workflows/run-ut.yml@develop
+    with:
+      artifact_name: ${{ needs.build-awesome-project.outputs.artifact_name }}
