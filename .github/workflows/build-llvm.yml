@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install swig java coreutils wget # git-lfs
+          brew install swig coreutils # git-lfs java wget
 
       - name: git setup
         run: |
@@ -44,7 +44,7 @@ jobs:
           /tmp/repo sync -c
           /tmp/repo forall -c 'git lfs pull'
 
-      - name: Prepare environment
+      - name: Prepare dependencies
         run: |
           ./toolchain/llvm-project/llvm-build/env_prepare.sh
 
