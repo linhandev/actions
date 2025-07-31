@@ -24,7 +24,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          brew install swig git-lfs java coreutils wget
+          brew install swig java coreutils wget # git-lfs
 
       - name: git setup
         run: |
@@ -35,16 +35,14 @@ jobs:
       - name: Install repo tool
         run: |
           curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 > /tmp/repo
-          mv /tmp/repo /usr/local/bin/repo
-          chmod u+x /usr/local/bin/repo
-          [ -e /usr/bin/python ] || ln -s /usr/bin/python3 /usr/bin/python
+          chmod u+x /tmp/repo
           pip install -i requests
 
       - name: Repo init and sync
         run: |
-          repo init -u https://gitee.com/OpenHarmony/manifest.git -b master -m llvm-19.1.7-toolchain.xml
-          repo sync -c
-          repo forall -c 'git lfs pull'
+          /tmp/repo init -u https://gitee.com/OpenHarmony/manifest.git -b master -m llvm-19.1.7-toolchain.xml
+          /tmp/repo sync -c
+          /tmp/repo forall -c 'git lfs pull'
 
       - name: Prepare environment
         run: |
