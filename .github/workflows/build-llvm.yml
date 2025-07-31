@@ -14,15 +14,31 @@ jobs:
       - name: Set up Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-            xcode-version: '14.3.1'
+          xcode-version: "14.3.1"
       - name: Check env
         run: |
           uname -m
           xcodebuild -version
+          python --version
+          python3 --version
 
       - name: Install dependencies
         run: |
           brew install swig git-lfs java coreutils wget
+
+      - name: git setup
+        run: |
+          git config --global --add safe.directory '*'
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+
+      - name: Install repo tool
+        run: |
+          curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 > /tmp/repo
+          mv /tmp/repo /usr/local/bin/repo
+          chmod u+x /usr/local/bin/repo
+          [ -e /usr/bin/python ] || ln -s /usr/bin/python3 /usr/bin/python
+          pip install -i requests
 
       - name: Repo init and sync
         run: |
