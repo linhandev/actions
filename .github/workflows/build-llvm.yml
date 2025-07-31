@@ -36,7 +36,7 @@ jobs:
         run: |
           curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 > /tmp/repo
           chmod u+x /tmp/repo
-          pip install -i requests
+          pip install requests
 
       - name: Repo init and sync
         run: |
@@ -51,3 +51,9 @@ jobs:
       - name: Build
         run: |
           python3 ./toolchain/llvm-project/llvm-build/build.py --no-build-riscv64 --no-build-mipsel --no-build-loongarch64 --no-build windows
+
+      - name: Upload packages folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: packages
