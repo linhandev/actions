@@ -17,6 +17,8 @@ jobs:
           xcode-version: "14.3.1"
       - name: Check env
         run: |
+          set -ex
+
           uname -m
           xcodebuild -version
           python --version
@@ -32,19 +34,29 @@ jobs:
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
 
+      - name: Cache source code
+        id: cache-source
+        uses: actions/cache@v4
+        with:
+          path: .
+          key: repo-source-${{ runner.os }}
+
       - name: Install repo tool
+        if: steps.cache-source.outputs.cache-hit != 'true'
         run: |
           curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 > /tmp/repo
           chmod u+x /tmp/repo
           pip install requests
 
-      - name: Repo init and sync
+      - name: Repo init and sync (if cache miss)
+        if: steps.cache-source.outputs.cache-hit != 'true'
         run: |
           /tmp/repo init -u https://gitee.com/OpenHarmony/manifest.git -b master -m llvm-19.1.7-toolchain.xml
           /tmp/repo sync -c
           /tmp/repo forall -c 'git lfs pull'
 
       - name: Prepare dependencies
+        if: steps.cache-source.outputs.cache-hit != 'true'
         run: |
           ./toolchain/llvm-project/llvm-build/env_prepare.sh
 
