@@ -9,6 +9,9 @@ jobs:
     #   matrix:
     #     os: [macos-13, macos-15]
     # runs-on: ${{ matrix.os }}
+    # intel: macos-13 macos-latest-large
+    # arm: macos-15 macos-latest-xlarge
+    # https://docs.github.com/en/actions/how-tos/manage-runners/larger-runners/use-larger-runners?platform=mac
     runs-on: macos-13
     steps:
       - name: Set up Xcode
@@ -60,12 +63,12 @@ jobs:
         run: |
           ./toolchain/llvm-project/llvm-build/env_prepare.sh
 
-    #   - name: Build
-    #     run: |
-    #       python3 ./toolchain/llvm-project/llvm-build/build.py --no-build-riscv64 --no-build-mipsel --no-build-loongarch64 --no-build windows
+      - name: Build
+        run: |
+          python3 ./toolchain/llvm-project/llvm-build/build.py --no-build-riscv64 --no-build-mipsel --no-build-loongarch64 --no-build windows
 
-    #   - name: Upload packages folder
-    #     uses: actions/upload-artifact@v4
-    #     with:
-    #       name: packages
-    #       path: packages
+      - name: Upload packages folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages
+          path: packages
