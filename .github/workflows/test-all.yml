@@ -2,9 +2,12 @@ name: Test All
 
 on:
   workflow_dispatch:
-  # push:
-  #   paths:
-  #   - '.github/workflows/test-all.yml'
+  push:
+    paths:
+    - '.github/workflows/test-all.yml'
+  schedule:
+    - cron: "0 */12 * * *"
+
 
 jobs:
   build-tester:
@@ -20,9 +23,9 @@ jobs:
       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
       dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
       signing_config_map: ${{ secrets.SIGNING_CONFIG_MAP }}
-  build-tester-ecosystem:
-    uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml@develop
-    secrets:
-        dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-        dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
-        signing_config_map: ${{ secrets.SIGNING_CONFIG_MAP }}
+  # build-tester-ecosystem:
+  #   uses: linhandev/actions/.github/workflows/build-tester-ecosystem.yml@develop
+  #   secrets:
+  #       dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #       dockerhub_token: ${{ secrets.DOCKERHUB_TOKEN }}
+  #       signing_config_map: ${{ secrets.SIGNING_CONFIG_MAP }}
